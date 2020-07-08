@@ -3,10 +3,7 @@ package br.sc.senai.model;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,6 +18,10 @@ public class User {
     private String email;
 
     private String password;
+
+   @ManyToOne
+   @JoinColumn(name="profile_id")
+   private Profile profile;
 
     @CreationTimestamp
     private LocalDateTime created_at;
@@ -58,6 +59,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 
     public LocalDateTime getCreated_at() {

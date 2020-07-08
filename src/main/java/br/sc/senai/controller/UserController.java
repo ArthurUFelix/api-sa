@@ -8,58 +8,79 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
+import java.util.Collection;
+import java.util.Optional;
+
 @RestController
-@RequestMapping(path = "/users")
+@RequestMapping(path = "/api")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping(path = "/add")
-    public @ResponseBody
-    String addNewUser(@RequestParam String name, @RequestParam String email, @RequestParam String password) {
-        User user = new User();
-        user.setName(name);
-        user.setEmail(email);
-        user.setPassword(password);
-        userRepository.save(user);
-
-        return "Usuário criado com sucesso";
-    }
-
-    @GetMapping(path = "/all")
-    public @ResponseBody
-    Iterable<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    @PostMapping(path = "/update")
-    public @ResponseBody
-    String updateUser(@RequestParam Integer id, @RequestParam String name, @RequestParam String email, @RequestParam String password) {
+    @PostMapping(path = "/users")
+    public @ResponseBody ResponseEntity<User> addNewUser(@RequestBody User user) {
         try {
-            User user = userRepository.findById(id).get();
-            user.setName(name);
-            user.setEmail(email);
-            user.setPassword(password);
-            userRepository.save(user);
+            User newUser = userRepository.save(user);
+            return new ResponseEntity<>(newUser, HttpStatus.CREATED);
         } catch (Exception e) {
-            throw new UserNotFoundException();
+            return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
         }
-
-        return "Usuário atualizado com sucesso";
     }
 
-    @PostMapping(path = "/remove")
-    public @ResponseBody
-    String removeUser(@RequestParam Integer id) {
-        userRepository.deleteById(id);
-
-        return "Usuário excluído com sucesso";
+    @GetMapping(path = "/users")
+    public @ResponseBody ResponseEntity<Iterable<User>> getAllUsers() {
+        try {
+            Iterable<User> users = userRepository.findAll();
+            if(((Collection<?>) users).size() == 0) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @PostMapping(path = "/allbyname")
-    public @ResponseBody
-    Iterable<User> findByName(@RequestParam String name) {
-        return userRepository.findByNameContaining(name);
+    @PutMapping(path = "/users/{id}")
+    public @ResponseBody ResponseEntity<User> updateUser(@PathVariable("id") Integer id, @RequestBody User user) {
+        Optional<User> userData = userRepository.findById(id);
+
+        if(userData.isPresent()) {
+            try {
+                User updatedUser = userData.get();
+                updatedUser.setName(user.getName());
+                updatedUser.setEmail(user.getEmail());
+                updatedUser.setPassword(user.getPassword());
+                return new ResponseEntity<>(userRepository.save(updatedUser), HttpStatus.OK);
+            } catch (Exception e) {
+                return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping(path = "/users/{id}")
+    public @ResponseBody ResponseEntity<HttpStatus> removeUser(@PathVariable("id") Integer id) {
+        try {
+            userRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @GetMapping(path = "/users/name/{name}")
+    public @ResponseBody ResponseEntity<Iterable<User>> findByName(@PathVariable("name") String name) {
+        try {
+            Iterable<User> users = userRepository.findByNameContaining(name);
+            if(((Collection<?>) users).size() == 0) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
