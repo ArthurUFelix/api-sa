@@ -1,32 +1,40 @@
 package br.sc.senai.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
+@Table(name = "users")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "transactions"})
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
-   @ManyToOne
-   @JoinColumn(name="profile_id")
-   private Profile profile;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Transaction> transactions;
 
     @CreationTimestamp
+    @Column(nullable = false)
     private LocalDateTime created_at;
 
     @UpdateTimestamp
+    @Column(nullable = false)
     private LocalDateTime updated_at;
 
     public Integer getId() {
@@ -61,12 +69,12 @@ public class User {
         this.password = password;
     }
 
-    public Profile getProfile() {
-        return profile;
+    public List<Transaction> getTransactions() {
+        return transactions;
     }
 
-    public void setProfile(Profile profile) {
-        this.profile = profile;
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     public LocalDateTime getCreated_at() {

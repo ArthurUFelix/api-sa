@@ -1,6 +1,5 @@
 package br.sc.senai.controller;
 
-import br.sc.senai.exception.UserNotFoundException;
 import br.sc.senai.model.User;
 import br.sc.senai.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.Response;
 import java.util.Collection;
 import java.util.Optional;
 
