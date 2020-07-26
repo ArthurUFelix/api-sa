@@ -1,15 +1,25 @@
 package br.sc.senai.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "username"),
+                @UniqueConstraint(columnNames = "email")
+        })
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "transactions"})
 public class User {
 
@@ -17,25 +27,45 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(nullable = false)
+    @NotBlank
+    @Size(max = 20)
+    private String username;
+
+    @NotBlank
     private String name;
 
-    @Column(nullable = false)
+    @NotBlank
+    @Email
     private String email;
 
-    @Column(nullable = false)
+    @NotBlank
+    @JsonIgnore
     private String password;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Transaction> transactions;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(	name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> role = new HashSet();
+
     @CreationTimestamp
-    @Column(nullable = false)
     private LocalDateTime created_at;
 
     @UpdateTimestamp
-    @Column(nullable = false)
     private LocalDateTime updated_at;
+
+    public User() {
+    }
+
+    public User(String username, String name, String email, String password) {
+        this.username = username;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
 
     public Integer getId() {
         return id;
@@ -43,6 +73,14 @@ public class User {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getName() {
@@ -75,6 +113,14 @@ public class User {
 
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
+    }
+
+    public Set<Role> getRole() {
+        return role;
+    }
+
+    public void setRole(Set<Role> role) {
+        this.role = role;
     }
 
     public LocalDateTime getCreated_at() {

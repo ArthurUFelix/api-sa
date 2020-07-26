@@ -1,6 +1,6 @@
 package br.sc.senai.model;
 
-import br.sc.senai.enums.FlowEnum;
+import br.sc.senai.enums.EFlow;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -25,7 +25,7 @@ public class Transaction {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private FlowEnum flow;
+    private EFlow flow;
 
     @Column(nullable = false, precision=10, scale=2)
     private BigDecimal value;
@@ -62,11 +62,11 @@ public class Transaction {
         this.user = user;
     }
 
-    public FlowEnum getFlow() {
+    public EFlow getFlow() {
         return flow;
     }
 
-    public void setFlow(FlowEnum flow) {
+    public void setFlow(EFlow flow) {
         this.flow = flow;
     }
 

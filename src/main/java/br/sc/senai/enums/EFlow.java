@@ -1,6 +1,6 @@
 package br.sc.senai.enums;
 
-public enum FlowEnum {
+public enum EFlow {
     IN,
     OUT
 }
