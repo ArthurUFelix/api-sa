@@ -1,7 +1,6 @@
 package br.sc.senai.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -20,7 +19,6 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "username"),
                 @UniqueConstraint(columnNames = "email")
         })
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "transactions"})
 public class User {
 
     @Id
@@ -43,6 +41,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Transaction> transactions;
 
     @ManyToMany(fetch = FetchType.LAZY)

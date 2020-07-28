@@ -1,6 +1,7 @@
 package br.sc.senai.model;
 
 import br.sc.senai.enums.EFlow;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -21,6 +22,7 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name="user_id")
+    @JsonIgnore
     private User user;
 
     @Enumerated(EnumType.STRING)

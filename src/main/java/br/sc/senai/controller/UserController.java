@@ -1,6 +1,8 @@
 package br.sc.senai.controller;
 
+import br.sc.senai.model.Transaction;
 import br.sc.senai.model.User;
+import br.sc.senai.repository.TransactionRepository;
 import br.sc.senai.repository.UserRepository;
 import br.sc.senai.security.WebSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class UserController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @GetMapping(path = "/users")
     public @ResponseBody ResponseEntity<Iterable<User>> getAllUsers() {
@@ -63,14 +68,14 @@ public class UserController {
         }
     }
 
-    @GetMapping(path = "/users/name/{name}")
-    public @ResponseBody ResponseEntity<Iterable<User>> findByName(@PathVariable("name") String name) {
+    @GetMapping(path = "/users/{id}/transactions")
+    public @ResponseBody ResponseEntity<Iterable<Transaction>> getTransactionsByUserId(@PathVariable("id") Integer id) {
         try {
-            Iterable<User> users = userRepository.findByNameContaining(name);
-            if(((Collection<?>) users).size() == 0) {
+            Iterable<Transaction> transactions = transactionRepository.findByUserId(id);
+            if(((Collection<?>) transactions).size() == 0) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            return new ResponseEntity<>(users, HttpStatus.OK);
+            return new ResponseEntity<>(transactions, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
