@@ -77,13 +77,13 @@ public class AuthController {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Username is already in use!"));
+                    .body(new MessageResponse("O e-mail informado já está em uso!"));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+                    .body(new MessageResponse("O e-mail informado já está em uso!"));
         }
 
         User user = new User(signUpRequest.getUsername(),
@@ -118,6 +118,6 @@ public class AuthController {
         user.setRole(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.ok(new MessageResponse("Registro concluído com sucesso"));
     }
 }

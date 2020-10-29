@@ -1,5 +1,6 @@
 package br.sc.senai.model;
 
+import br.sc.senai.enums.ECategory;
 import br.sc.senai.enums.EFlow;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,6 +28,10 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EFlow flow;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ECategory category;
 
     @Column(nullable = false, precision=10, scale=2)
     private BigDecimal value;
@@ -69,6 +74,14 @@ public class Transaction {
 
     public void setFlow(EFlow flow) {
         this.flow = flow;
+    }
+
+    public ECategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(ECategory category) {
+        this.category = category;
     }
 
     public BigDecimal getValue() {

@@ -11,7 +11,6 @@ public class SignupRequest {
     private String name;
 
     @NotBlank
-    @Size(min = 3, max = 20)
     private String username;
 
     @NotBlank
@@ -21,7 +20,6 @@ public class SignupRequest {
     private Set<String> role;
 
     @NotBlank
-    @Size(min = 4, max = 16)
     private String password;
 
     public String getName() {
