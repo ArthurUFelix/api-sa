@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.Optional;
 
-@RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
+@RestController
 @RequestMapping(path = "/api")
 public class TransactionController {
 

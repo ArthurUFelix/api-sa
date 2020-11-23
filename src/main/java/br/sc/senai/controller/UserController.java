@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -22,6 +23,9 @@ public class UserController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    PasswordEncoder encoder;
 
     @Autowired
     private TransactionRepository transactionRepository;
@@ -40,7 +44,7 @@ public class UserController {
     }
 
     @PutMapping(path = "/users/{id}")
-    public @ResponseBody ResponseEntity<User> updateUser(@PathVariable("id") Integer id, @RequestBody User user) {
+    public @ResponseBody ResponseEntity<?> updateUser(@PathVariable("id") Integer id, @RequestBody User user) {
         Optional<User> userData = userRepository.findById(id);
 
         if(userData.isPresent()) {
@@ -48,7 +52,17 @@ public class UserController {
                 User updatedUser = userData.get();
                 updatedUser.setName(user.getName());
                 updatedUser.setEmail(user.getEmail());
-                updatedUser.setPassword(user.getPassword());
+
+                if(user.getPassword() != null) {
+                    updatedUser.setPassword(encoder.encode(user.getPassword()));
+                }
+
+                Optional<User> existsUser = userRepository.findByEmail(user.getEmail());
+
+                if(existsUser.isPresent() && existsUser.get().getId() != updatedUser.getId() ) {
+                    return new ResponseEntity<>("O email inserido já está em uso", HttpStatus.BAD_REQUEST);
+                }
+
                 return new ResponseEntity<>(userRepository.save(updatedUser), HttpStatus.OK);
             } catch (Exception e) {
                 return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
