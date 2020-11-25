@@ -1,10 +1,17 @@
 package br.sc.senai.enums;
 
 public enum ECategory {
+    EMPRESTIMO,
+    INVESTIMENTO,
     SALARIO,
-    FREELANCE,
-    APOSTA,
+    ALIMENTACAO,
+    ASSINATURAS_E_SERVICOS,
+    EDUCACAO,
+    IMPOSTOS_E_TAXAS,
+    LAZER_E_HOBBIES,
+    OUTROS,
+    PERTS,
     ROUPAS,
-    COMIDA,
-    TRANSPORTE
+    SAUDE,
+    TRANSPORTE,
 }
