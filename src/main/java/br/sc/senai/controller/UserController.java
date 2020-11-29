@@ -7,12 +7,17 @@ import br.sc.senai.repository.UserRepository;
 import br.sc.senai.security.WebSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Import(WebSecurityConfig.class)
@@ -83,13 +88,24 @@ public class UserController {
     }
 
     @GetMapping(path = "/users/{id}/transactions")
-    public @ResponseBody ResponseEntity<Iterable<Transaction>> getTransactionsByUserId(@PathVariable("id") Integer id) {
+    public @ResponseBody ResponseEntity<?> getTransactionsByUserId(
+            @PathVariable("id") Integer id,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "999") Integer size) {
         try {
-            Iterable<Transaction> transactions = transactionRepository.findByUserId(id);
-            if(((Collection<?>) transactions).size() == 0) {
+            Pageable paging = PageRequest.of(page, size);
+            Page<Transaction> transactions = transactionRepository.findByUserIdOrderByCreatedAtDesc(id, paging);
+
+            if(transactions.getSize() == 0) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            return new ResponseEntity<>(transactions, HttpStatus.OK);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("transactions", transactions.getContent());
+            response.put("currentPage", transactions.getNumber());
+            response.put("totalItems", transactions.getTotalElements());
+            response.put("totalPages", transactions.getTotalPages());
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
