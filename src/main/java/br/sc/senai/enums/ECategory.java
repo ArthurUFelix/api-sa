@@ -10,7 +10,7 @@ public enum ECategory {
     IMPOSTOS_E_TAXAS,
     LAZER_E_HOBBIES,
     OUTROS,
-    PERTS,
+    PETS,
     ROUPAS,
     SAUDE,
     TRANSPORTE,
