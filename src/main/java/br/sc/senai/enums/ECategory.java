@@ -14,4 +14,5 @@ public enum ECategory {
     ROUPAS,
     SAUDE,
     TRANSPORTE,
+    MORADIA
 }
