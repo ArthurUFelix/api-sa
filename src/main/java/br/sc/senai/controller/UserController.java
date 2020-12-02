@@ -110,4 +110,21 @@ public class UserController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(path = "/users/{id}/transactions/{transactionId}")
+    public @ResponseBody ResponseEntity<?> getUserTransactionById(
+            @PathVariable("id") Integer id,
+            @PathVariable("transactionId") Integer transactionId) {
+        try {
+            Optional<Transaction> transaction = transactionRepository.findByIdAndUserId(transactionId, id);
+
+            if(transaction.isPresent()) {
+                return new ResponseEntity<>(transaction, HttpStatus.OK);
+            }
+
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
