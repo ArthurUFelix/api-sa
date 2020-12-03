@@ -49,6 +49,7 @@ public class TransactionController {
             try {
                 Transaction updatedTransaction = transactionData.get();
                 updatedTransaction.setDescription(transaction.getDescription());
+                updatedTransaction.setCategory(transaction.getCategory());
                 updatedTransaction.setFlow(transaction.getFlow());
                 updatedTransaction.setValue(transaction.getValue());
                 return new ResponseEntity<>(transactionRepository.save(updatedTransaction), HttpStatus.OK);
